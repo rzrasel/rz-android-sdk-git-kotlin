@@ -12,6 +12,14 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
+        //
+        def date = new Date()
+        def formattedDate = date.format("yyyy-MM-dd")
+        //def apkName = "$rootProject.APP_NAME" + "-" + formattedDate + "-v" + defaultConfig.versionName
+        //def apkName = "$project.ext.coreConfig.APP_NAME" + "-" + formattedDate + "-v-" + defaultConfig.versionName
+        def apkName = "$rootProject.name" + "-v-" + rootProject.ext.coreConfig.versionName
+        setProperty("archivesBaseName", "$apkName")
+        setProperty("archivesBaseName", "$apkName")
     }
 
     buildTypes {
