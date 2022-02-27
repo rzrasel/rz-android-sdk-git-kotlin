@@ -13,4 +13,6 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "Rz Android Kotlin Git SDK"
-include ':appusagesexample'
+include ":appusagesexample"
+include ":rzandjavagit-propermission"
+include ":rzandjavagit-propreferences"

@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.RzAndroidKotlinGitSDK">
         <activity
+            android:name=".ActivityProPreferences"
+            android:exported="false" />
+        <activity
             android:name=".ActivitySplash"
             android:exported="true">
             <intent-filter>

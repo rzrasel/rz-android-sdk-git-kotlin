@@ -10,10 +10,18 @@ android {
         applicationId "com.rzandroidgit.appusagesexample"
         minSdk 21
         targetSdk 31
-        versionCode 1
-        versionName "1.0"
+        versionCode rootProject.ext.coreConfig.versionCode
+        versionName rootProject.ext.coreConfig.versionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        //
+        def date = new Date()
+        def formattedDate = date.format("yyyy-MM-dd")
+        //def apkName = "$rootProject.APP_NAME" + "-" + formattedDate + "-v" + defaultConfig.versionName
+        def apkName = "$rootProject.ext.coreConfig.APP_NAME" + "-" + formattedDate + "-v-" + defaultConfig.versionName
+        //def apkName = "$project.name" + "-" + formattedDate + "-v" + defaultConfig.versionName
+        setProperty("archivesBaseName", "$apkName")
+        //
     }
 
     buildTypes {
@@ -40,4 +48,7 @@ dependencies {
     testImplementation "junit:junit:4.13.2"
     androidTestImplementation "androidx.test.ext:junit:1.1.3"
     androidTestImplementation "androidx.test.espresso:espresso-core:3.4.0"
+    //
+    /*gradle customisation*/
+    implementation project(path: ":rzandjavagit-propreferences")
 }

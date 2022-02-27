@@ -8,3 +8,20 @@ plugins {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+ext {
+    APP_NAME = "Rz Android Kotlin Git SDK"
+    coreConfig = [
+            APP_NAME   : "Rz Android Kotlin Git SDK",
+            versionCode: 101,
+            versionName: "1.0.1",
+    ]
+}
+/*
+project.ext {
+    coreConfig = [
+            APP_NAME         : "Rz Android Kotlin Git SDK",
+            versionCode      : 105,
+            versionName      : "1.0.32",
+    ]
+}*/
