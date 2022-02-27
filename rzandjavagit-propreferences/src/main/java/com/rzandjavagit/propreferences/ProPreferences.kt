@@ -55,7 +55,11 @@ public class ProPreferences(val builder: Builder) {
     public fun putInt(key: String, value: Int) {
         val editor: SharedPreferences.Editor = getPreferences().edit()
         editor.putInt(key, value)
-        editor.apply()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+            editor.apply()
+        } else {
+            editor.commit()
+        }
     }
 
     public fun getBoolean(key: String, defValue: Boolean): Boolean {
@@ -69,7 +73,11 @@ public class ProPreferences(val builder: Builder) {
     public fun putBoolean(key: String, value: Boolean) {
         val editor: SharedPreferences.Editor = getPreferences().edit()
         editor.putBoolean(key, value)
-        editor.apply()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+            editor.apply()
+        } else {
+            editor.commit()
+        }
     }
 
     public fun getLong(key: String, defValue: Long): Long {
@@ -83,7 +91,11 @@ public class ProPreferences(val builder: Builder) {
     public fun putLong(key: String, value: Long) {
         val editor: SharedPreferences.Editor = getPreferences().edit()
         editor.putLong(key, value)
-        editor.apply()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+            editor.apply()
+        } else {
+            editor.commit()
+        }
     }
 
     public fun getDouble(key: String, defValue: Double): Double {
@@ -102,7 +114,11 @@ public class ProPreferences(val builder: Builder) {
     public fun putDouble(key: String, value: Double) {
         val editor: SharedPreferences.Editor = getPreferences().edit()
         editor.putLong(key, java.lang.Double.doubleToRawLongBits(value))
-        editor.apply()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+            editor.apply()
+        } else {
+            editor.commit()
+        }
     }
 
     public fun getFloat(key: String, defValue: Float): Float {
@@ -116,7 +132,11 @@ public class ProPreferences(val builder: Builder) {
     public fun putFloat(key: String, value: Float) {
         val editor: SharedPreferences.Editor = getPreferences().edit()
         editor.putFloat(key, value)
-        editor.apply()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+            editor.apply()
+        } else {
+            editor.commit()
+        }
     }
 
     public fun getString(key: String, defValue: String): String? {
@@ -140,7 +160,11 @@ public class ProPreferences(val builder: Builder) {
     public fun putString(key: String, value: String) {
         val editor: SharedPreferences.Editor = getPreferences().edit()
         editor.putString(key, value)
-        editor.apply()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+            editor.apply()
+        } else {
+            editor.commit()
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -189,12 +213,16 @@ public class ProPreferences(val builder: Builder) {
             editor.remove("$key[$i]")
             i++
         }
-        editor.apply()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+            editor.apply()
+        } else {
+            editor.commit()
+        }
     }
 
     public fun remove(key: String) {
         val prefs: SharedPreferences = getPreferences()
-        val editor = prefs.edit()
+        val editor: SharedPreferences.Editor = prefs.edit()
         if (prefs.contains(key + LENGTH)) {
             // Workaround for pre-HC's lack of StringSets
             val stringSetLength = prefs.getInt(key + LENGTH, -1)
@@ -206,7 +234,11 @@ public class ProPreferences(val builder: Builder) {
             }
         }
         editor.remove(key)
-        editor.apply()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+            editor.apply()
+        } else {
+            editor.commit()
+        }
     }
 
     public fun remove() {
@@ -220,7 +252,11 @@ public class ProPreferences(val builder: Builder) {
 
     public fun clear(): SharedPreferences.Editor {
         val editor: SharedPreferences.Editor = getPreferences().edit().clear()
-        editor.apply()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+            editor.apply()
+        } else {
+            editor.commit()
+        }
         return editor
     }
 
