@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "com.rzandroidgit.appusagesexample"
-        minSdk 21
+        minSdk 16
         targetSdk 31
         versionCode rootProject.ext.coreConfig.versionCode
         versionName rootProject.ext.coreConfig.versionName

@@ -8,13 +8,13 @@ import com.rzandjavagit.propreferences.ProPreferences
 
 class ActivityProPreferences : AppCompatActivity() {
     private lateinit var proPreferences: ProPreferences
-    private lateinit var sysButtonProPref: Button
+    private lateinit var sysButtonPreferences: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pro_preferences)
         //
-        sysButtonProPref = findViewById<Button>(R.id.sysButtonProPref)
+        sysButtonPreferences = findViewById<Button>(R.id.sysButtonPreferences)
         //ProPreferences
         proPreferences = ProPreferences.Builder()
             .withContext(this)
@@ -23,7 +23,7 @@ class ActivityProPreferences : AppCompatActivity() {
             .withDefaultPrefs(false)
             .build()
         proPreferences.putLong("long_value", 1000L)
-        sysButtonProPref.setOnClickListener(View.OnClickListener {
+        sysButtonPreferences.setOnClickListener(View.OnClickListener {
             println("DEBUG_LOG_PRINT: ${proPreferences.getLong("long_value")}")
         })
         proPreferences.logPrint()
