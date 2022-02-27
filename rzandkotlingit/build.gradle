@@ -1,27 +1,26 @@
 plugins {
-    id "com.android.application"
+    id "com.android.library"
     id "org.jetbrains.kotlin.android"
 }
+
+project.ext.moduleName = "rzandjavagit"
 
 android {
     compileSdk 31
 
     defaultConfig {
-        applicationId "com.rzandroidgit.appusagesexample"
-        minSdk 16
+        /*minSdk 21
         targetSdk 31
-        versionCode rootProject.ext.coreConfig.versionCode
-        versionName rootProject.ext.coreConfig.versionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"*/
         //
         def date = new Date()
         def formattedDate = date.format("yyyy-MM-dd")
         //def apkName = "$rootProject.APP_NAME" + "-" + formattedDate + "-v" + defaultConfig.versionName
-        def apkName = "$rootProject.ext.coreConfig.APP_NAME" + "-" + formattedDate + "-v-" + defaultConfig.versionName
-        //def apkName = "$project.name" + "-" + formattedDate + "-v" + defaultConfig.versionName
+        //def apkName = "$project.ext.coreConfig.APP_NAME" + "-" + formattedDate + "-v-" + defaultConfig.versionName
+        def apkName = "$project.moduleName" + "-v-" + rootProject.ext.coreConfig.versionName
         setProperty("archivesBaseName", "$apkName")
-        //
     }
 
     buildTypes {
@@ -44,14 +43,7 @@ dependencies {
     implementation "androidx.core:core-ktx:1.7.0"
     implementation "androidx.appcompat:appcompat:1.4.1"
     implementation "com.google.android.material:material:1.5.0"
-    implementation "androidx.constraintlayout:constraintlayout:2.1.3"
     testImplementation "junit:junit:4.13.2"
     androidTestImplementation "androidx.test.ext:junit:1.1.3"
     androidTestImplementation "androidx.test.espresso:espresso-core:3.4.0"
-    //
-    /*gradle customisation*/
-    implementation project(path: ":rzandkotlingit")
-    implementation project(path: ":rzandkotlingit-core")
-    implementation project(path: ":rzandkotlingit-propreferences")
-    implementation project(path: ":rzandkotlingit-propermission")
 }

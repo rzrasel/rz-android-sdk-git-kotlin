@@ -4,7 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
-import com.rzandjavagit.propreferences.ProPreferences
+import com.rzandkotlingit.propreferences.ProPreferences
 
 class ActivityProPreferences : AppCompatActivity() {
     private lateinit var proPreferences: ProPreferences

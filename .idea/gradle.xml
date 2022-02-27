@@ -11,8 +11,10 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/appusagesexample" />
-            <option value="$PROJECT_DIR$/rzandjavagit-propermission" />
-            <option value="$PROJECT_DIR$/rzandjavagit-propreferences" />
+            <option value="$PROJECT_DIR$/rzandkotlingit" />
+            <option value="$PROJECT_DIR$/rzandkotlingit-core" />
+            <option value="$PROJECT_DIR$/rzandkotlingit-propermission" />
+            <option value="$PROJECT_DIR$/rzandkotlingit-propreferences" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
