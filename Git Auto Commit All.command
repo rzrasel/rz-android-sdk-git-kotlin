@@ -4,7 +4,7 @@ read input
 
 dateTime=$(date "+%Y-%m-%d %H:%M:%S")
 commit="git commit -m"
-gitcommit="$commit $input ⇒ $dateTime"
+gitcommit="$commit $input - $dateTime"
 echo "$gitcommit"
 git add .
 $gitcommit

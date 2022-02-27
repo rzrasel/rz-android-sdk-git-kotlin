@@ -11,7 +11,7 @@ set /p input="Enter Commit Text: "
 :: set newinput=%input%
 set date=%DATE%
 set commit=git commit -m
-set gitcommit=%commit% "%input% ⇒ %date% %TIME%"
+set gitcommit=%commit% "%input% - %date% %TIME%"
 git add .
 :: git commit -m "COMMIT COMPLETE A"
 :: echo %gitcommit%
