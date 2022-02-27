@@ -3,15 +3,24 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
+project.ext.moduleName = "rzandjavagit-propreferences"
+
 android {
     compileSdk 31
 
     defaultConfig {
-        minSdk 21
+        /*minSdk 21
         targetSdk 31
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles "consumer-rules.pro"
+        consumerProguardFiles "consumer-rules.pro"*/
+        //
+        def date = new Date()
+        def formattedDate = date.format("yyyy-MM-dd")
+        //def apkName = "$rootProject.APP_NAME" + "-" + formattedDate + "-v" + defaultConfig.versionName
+        //def apkName = "$project.ext.coreConfig.APP_NAME" + "-" + formattedDate + "-v-" + defaultConfig.versionName
+        def apkName = "$project.moduleName" + "-v-" + rootProject.ext.coreConfig.versionName
+        setProperty("archivesBaseName", "$apkName")
     }
 
     buildTypes {
