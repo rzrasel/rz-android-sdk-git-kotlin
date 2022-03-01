@@ -30,7 +30,7 @@ class ActivityProAdMob : AppCompatActivity() {
             .setEventListener(SetAdEventListener())
             .setIsDebug(false)
             .build(activity, context)
-        proAdMobManager.onClear()
+        //proAdMobManager.onClear()
         /*println("DEBUG_LOG_PRINT: ${ProAdMobManager.PrefKey.getItem("none")}")
         println("DEBUG_LOG_PRINT: ${ProAdMobManager.PrefKey.ADMOB_LAST_VIEW_TIME_MILLIS.name}")
         if (proAdMobManager.canShowAdView(false)) {

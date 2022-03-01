@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.os.Debug
 import com.google.android.gms.ads.AdRequest
+import java.lang.Math.abs
 
 public class ProAdMobManager(private val builder: Builder) {
     private lateinit var activity: Activity
@@ -11,6 +12,12 @@ public class ProAdMobManager(private val builder: Builder) {
     private lateinit var adEventListener: OnAdEventListener
     private lateinit var proPreferences: ProPreferences
     private lateinit var proAdMobHelper: ProAdMobHelper
+    private val timeSecondMax = 70
+    private val timeSecondMin = 30
+    private val timeOverFactorMax = 3.3
+    private val timeOverFactorMin = 2.0
+    private val eventMax = 22
+    private val eventMin = 12
     private var isDebug: Boolean
 
     init {
@@ -59,6 +66,21 @@ public class ProAdMobManager(private val builder: Builder) {
         return false
     }
 
+    public fun isMaxTimeOver(): Boolean {
+        val nextAdTimeSeconds =
+            proPreferences.getInt(PrefKey.ADMOB_NEXT_VIEW_TIME_SECONDS.label, 0)
+        val timeDiffSeconds = abs(lastAdViewTimeDifference(true))
+        val timeFactor = getRandomFloat(timeOverFactorMin, timeOverFactorMax)
+        val timeOverFactor: Int =
+            getDecimalFormat((nextAdTimeSeconds.toDouble() * timeFactor).toDouble()).toInt()
+        println("DEBUG_LOG_PRINT:\n(#): nextAdTimeSeconds $nextAdTimeSeconds, timeDiffSeconds $timeDiffSeconds")
+        println("DEBUG_LOG_PRINT:\n(#): timeFactor: $timeFactor, timeOverFactor: $timeOverFactor")
+        if (timeDiffSeconds > timeOverFactor) {
+            return true
+        }
+        return false
+    }
+
     public fun canShowAdView(isForced: Boolean): Boolean {
         var retVal = false
         val nextAdViewTimeSeconds =
@@ -69,6 +91,9 @@ public class ProAdMobManager(private val builder: Builder) {
             if (isForced) {
                 return retVal
             }
+        }
+        if (isMaxTimeOver()) {
+            return true
         }
         if (isLastAdViewEventCountPassed() && retVal) {
             return true
@@ -118,8 +143,8 @@ public class ProAdMobManager(private val builder: Builder) {
             }
         }
         val lastAdViewMillis: Long = System.currentTimeMillis()
-        val nextTimeSeconds: Int = getRandomId(30, 70)
-        val nextEventNeed: Int = getRandomId(12, 22)
+        val nextTimeSeconds: Int = getRandomId(timeSecondMin, timeSecondMax)
+        val nextEventNeed: Int = getRandomId(eventMin, eventMax)
         proPreferences.putBoolean(PrefKey.ADMOB_IS_VIEW_PRE_PREF_INITIALIZED.label, true)
         proPreferences.putLong(PrefKey.ADMOB_LAST_VIEW_TIME_MILLIS.label, lastAdViewMillis)
         proPreferences.putInt(PrefKey.ADMOB_NEXT_VIEW_TIME_SECONDS.label, nextTimeSeconds)

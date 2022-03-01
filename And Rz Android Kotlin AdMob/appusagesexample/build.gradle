@@ -14,6 +14,7 @@ android {
         versionName rootProject.ext.coreConfig.versionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
         //
         def date = new Date()
         def formattedDate = date.format("yyyy-MM-dd")
