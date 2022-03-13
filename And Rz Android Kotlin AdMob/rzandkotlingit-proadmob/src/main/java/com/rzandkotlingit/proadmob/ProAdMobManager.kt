@@ -83,6 +83,8 @@ public class ProAdMobManager(private val builder: Builder) {
 
     public fun canShowAdView(isForced: Boolean): Boolean {
         var retVal = false
+        val proAdMobDataManager = ProPrefAdMobDataManager()
+        proAdMobDataManager.onLogPrint(proAdMobDataManager.onPrefDataSetup())
         val nextAdViewTimeSeconds =
             proPreferences.getInt(PrefKey.ADMOB_NEXT_VIEW_TIME_SECONDS.label, 0)
         val timeDiffSeconds = lastAdViewTimeDifference(true)
