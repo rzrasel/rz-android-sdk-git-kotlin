@@ -9,6 +9,8 @@ import java.lang.Math.abs
 public class ProAdMobManager(private val builder: Builder) {
     private lateinit var activity: Activity
     private lateinit var context: Context
+    private lateinit var proConfigData: ProConfigData
+    private lateinit var proPrefAdMobDataManager: ProPrefAdMobDataManager
     private lateinit var adEventListener: OnAdEventListener
     private lateinit var proPreferences: ProPreferences
     private lateinit var proAdMobHelper: ProAdMobHelper
@@ -23,12 +25,31 @@ public class ProAdMobManager(private val builder: Builder) {
     init {
         this.activity = builder.activity
         this.context = builder.context
+        this.proConfigData = builder.proConfigData
+        this.adEventListener = builder.eventListener
         this.isDebug = builder.isDebug
-        adEventListener = builder.eventListener
+        //
+        onSetupProPreferences()
+        //
+        if (this.proConfigData == null) {
+            proConfigData = ProConfigData(
+                70,
+                30,
+                22,
+                12,
+                4.5,
+                2.0,
+                isDebug,
+            )
+        }
+        val proAdMobDataManager = ProPrefAdMobDataManager.Builder()
+            .build(this.proConfigData)
+        proAdMobDataManager.onLogPrint(proAdMobDataManager.onPrefDataSetup())
+        proAdMobDataManager.onLogPrint()
+        //
         proAdMobHelper = ProAdMobHelper(activity, context)
             .setEventListener(SetAdEventListener())
             .setIsDebug(isDebug)
-        onSetupProPreferences()
         //
         //proPreferences.clear()
         //onProPrefInitialize(false)
@@ -83,8 +104,6 @@ public class ProAdMobManager(private val builder: Builder) {
 
     public fun canShowAdView(isForced: Boolean): Boolean {
         var retVal = false
-        val proAdMobDataManager = ProPrefAdMobDataManager()
-        proAdMobDataManager.onLogPrint(proAdMobDataManager.onPrefDataSetup())
         val nextAdViewTimeSeconds =
             proPreferences.getInt(PrefKey.ADMOB_NEXT_VIEW_TIME_SECONDS.label, 0)
         val timeDiffSeconds = lastAdViewTimeDifference(true)
@@ -205,11 +224,17 @@ public class ProAdMobManager(private val builder: Builder) {
     public class Builder {
         lateinit var activity: Activity
         lateinit var context: Context
+        lateinit var proConfigData: ProConfigData
         lateinit var eventListener: OnAdEventListener
         var isDebug = false
 
         fun setEventListener(adEventListener: OnAdEventListener): Builder {
             this.eventListener = adEventListener
+            return this
+        }
+
+        fun setConfigData(proConfigData: ProConfigData): Builder {
+            this.proConfigData = proConfigData
             return this
         }
 
@@ -242,6 +267,7 @@ public class ProAdMobManager(private val builder: Builder) {
         ADMOB_TOTAL_BUTTON_CLICK_EVENT("admob_total_button_click_event"),
         ADMOB_TOTAL_VIEW_RESUME_EVENT("admob_total_view_resume_event"),
         ADMOB_NEXT_EVENT_NEED("admob_next_event_need"),
+        ADMOB_JSON_MODEL_CLASS_DATA("admob_json_model_class_data"),
         NONE("none");
 
         companion object {

@@ -13,6 +13,11 @@ fun getRandomFloat(from: Double, to: Double): Double {
     return getDecimalFormat(random.nextFloat() * (to - from) + from)
 }
 
+fun getRandomDouble(from: Double, to: Double): Double {
+    val random = Random()
+    return getDecimalFormat(random.nextFloat() * (to - from) + from)
+}
+
 fun getDecimalFormat(value: Double): Double {
     val decimalFormat = DecimalFormat("#.##")
     return decimalFormat.format(value).toDouble()

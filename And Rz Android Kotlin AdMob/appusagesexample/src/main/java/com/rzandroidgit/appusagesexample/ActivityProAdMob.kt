@@ -7,10 +7,12 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import com.rzandkotlingit.proadmob.ProAdMobManager
+import com.rzandkotlingit.proadmob.ProConfigData
 
 class ActivityProAdMob : AppCompatActivity() {
     private lateinit var activity: Activity
     private lateinit var context: Context
+    private lateinit var proConfigData: ProConfigData
     private lateinit var proAdMobManager: ProAdMobManager
 
     //
@@ -26,9 +28,20 @@ class ActivityProAdMob : AppCompatActivity() {
         //
         sysBtnProAdMob = findViewById(R.id.sysBtnProAdMob)
         //
+        proConfigData = ProConfigData(
+            70,
+            30,
+            22,
+            12,
+            4.5,
+            2.0,
+            true,
+        )
+        //
         proAdMobManager = ProAdMobManager.Builder()
             .setEventListener(SetAdEventListener())
-            .setIsDebug(false)
+            .setConfigData(proConfigData)
+            .setIsDebug(proConfigData.isDebug)
             .build(activity, context)
         //proAdMobManager.onClear()
         /*println("DEBUG_LOG_PRINT: ${ProAdMobManager.PrefKey.getItem("none")}")
