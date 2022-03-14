@@ -29,8 +29,8 @@ class ActivityProAdMob : AppCompatActivity() {
         sysBtnProAdMob = findViewById(R.id.sysBtnProAdMob)
         //
         proConfigData = ProConfigData(
+            140,
             70,
-            30,
             22,
             12,
             4.5,
@@ -78,7 +78,7 @@ class ActivityProAdMob : AppCompatActivity() {
     inner class SetAdEventListener : ProAdMobManager.OnAdEventListener {
         override fun onAdLoaded() {
             println("DEBUG_LOG_PRINT: onAdLoaded()")
-            proAdMobManager.show()
+            proAdMobManager.showAd()
         }
 
         override fun onAdFailedToLoad(adError: String) {

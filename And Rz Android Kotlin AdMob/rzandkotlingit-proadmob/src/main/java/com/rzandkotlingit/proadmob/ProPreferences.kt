@@ -139,7 +139,7 @@ internal class ProPreferences(private val builder: Builder) {
         }
     }
 
-    public fun getString(key: String, defValue: String): String? {
+    public fun getString(key: String, defValue: String?): String? {
         return getPreferences().getString(key, defValue)
     }
 

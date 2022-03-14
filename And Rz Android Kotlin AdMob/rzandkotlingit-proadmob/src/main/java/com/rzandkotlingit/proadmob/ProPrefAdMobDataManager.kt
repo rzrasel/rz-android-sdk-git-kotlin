@@ -4,16 +4,16 @@ import com.google.gson.Gson
 
 internal class ProPrefAdMobDataManager(private val builder: Builder) {
     private val gson = Gson()
-    private lateinit var proConfigData: ProConfigData
+    private var proConfigData: ProConfigData
 
     //
     init {
         this.proConfigData = builder.proConfigData
     }
 
-    public fun onPrefDataSetup(): ProPrefAdMobData {
+    public fun onSetupPrefData(): ProPrefAdMobData {
         val isInitialized: Boolean = true
-        val lastTimeMills: Long = System.currentTimeMillis()
+        val lastTimeMillis: Long = System.currentTimeMillis()
         val lastTimeSeconds: Long = System.currentTimeMillis() / 1000
         //
         val nextRandSeconds: Int =
@@ -21,7 +21,7 @@ internal class ProPrefAdMobDataManager(private val builder: Builder) {
         val totalEventForNext: Int = getRandomId(proConfigData.minEvent, proConfigData.maxEvent)
         //
         val nextTimeSeconds: Long = lastTimeSeconds + nextRandSeconds
-        val nextTimeMills: Long = nextTimeSeconds * 1000
+        val nextTimeMillis: Long = nextTimeSeconds * 1000
         val nextRemainTimeSeconds: Long = nextTimeSeconds - lastTimeSeconds
         val totalButtonClickEvent: Int = 0
         val totalViewResumeEvent: Int = 0
@@ -45,10 +45,10 @@ internal class ProPrefAdMobDataManager(private val builder: Builder) {
         //
         return ProPrefAdMobData(
             isInitialized,
-            lastTimeMills,
+            lastTimeMillis,
             lastTimeSeconds,
             nextRandSeconds,
-            nextTimeMills,
+            nextTimeMillis,
             nextTimeSeconds,
             nextRemainTimeSeconds,
             totalEventForNext,
@@ -87,6 +87,63 @@ internal class ProPrefAdMobDataManager(private val builder: Builder) {
         fun build(proConfigData: ProConfigData): ProPrefAdMobDataManager {
             this.proConfigData = proConfigData
             return ProPrefAdMobDataManager(this)
+        }
+    }
+
+    inner class AdViewDataManager() {
+        private fun nextTimeDiffInMillis(proPrefAdMobData: ProPrefAdMobData): Long {
+            val currentTimeMillis: Long = System.currentTimeMillis()
+            return proPrefAdMobData.nextTimeMillis - currentTimeMillis
+        }
+
+        private fun nextTimeDiffInSeconds(proPrefAdMobData: ProPrefAdMobData): Long {
+            val currentTimeMillis: Long = System.currentTimeMillis() / 1000
+            proPrefAdMobData.nextRemainTimeSeconds =
+                proPrefAdMobData.nextTimeSeconds - currentTimeMillis
+            return proPrefAdMobData.nextTimeSeconds - currentTimeMillis
+        }
+
+        private fun canShowByForced(proPrefAdMobData: ProPrefAdMobData): Boolean {
+            val eventRemain =
+                proPrefAdMobData.totalEventForNextViewing - proPrefAdMobData.totalEventCount
+            if (nextTimeDiffInSeconds(proPrefAdMobData) < 0 || eventRemain < 0) {
+                return true
+            }
+            return false
+        }
+
+        private fun canPassByRegular(proPrefAdMobData: ProPrefAdMobData): Boolean {
+            val eventRemain =
+                proPrefAdMobData.totalEventForNextViewing - proPrefAdMobData.totalEventCount
+            if (nextTimeDiffInSeconds(proPrefAdMobData) < 0 && eventRemain < 0) {
+                return true
+            }
+            return false
+        }
+
+        private fun isMaxTimeOver(proPrefAdMobData: ProPrefAdMobData): Boolean {
+            val totalTimeFactor =
+                (proPrefAdMobData.lastTimeSeconds + proPrefAdMobData.totalTimeFactorOffset) - (System.currentTimeMillis() / 1000)
+            val totalEventFactor =
+                proPrefAdMobData.totalEventOffset - proPrefAdMobData.totalEventCount
+            if (totalTimeFactor < 0 || totalEventFactor < 0) {
+                return true
+            }
+            return false
+        }
+
+        fun canShowAdView(proPrefAdMobData: ProPrefAdMobData, isForced: Boolean): Boolean {
+            //var retVal = false
+            if (canShowByForced(proPrefAdMobData) && isForced) {
+                return true
+            }
+            if (canPassByRegular(proPrefAdMobData)) {
+                return true
+            }
+            if (isMaxTimeOver(proPrefAdMobData)) {
+                return true
+            }
+            return false
         }
     }
 

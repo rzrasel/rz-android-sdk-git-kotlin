@@ -10,6 +10,7 @@ public class ProAdMobManager(private val builder: Builder) {
     private lateinit var activity: Activity
     private lateinit var context: Context
     private lateinit var proConfigData: ProConfigData
+    private lateinit var proPrefAdMobData: ProPrefAdMobData
     private lateinit var proPrefAdMobDataManager: ProPrefAdMobDataManager
     private lateinit var adEventListener: OnAdEventListener
     private lateinit var proPreferences: ProPreferences
@@ -29,41 +30,18 @@ public class ProAdMobManager(private val builder: Builder) {
         this.adEventListener = builder.eventListener
         this.isDebug = builder.isDebug
         //
-        onSetupProPreferences()
+        OnSetupInitialization()
+            .onSetupProPreferences()
+            .onSetupPrefAdMobDataManager()
+            .onSetupAdMobHelper()
         //
-        if (this.proConfigData == null) {
-            proConfigData = ProConfigData(
-                70,
-                30,
-                22,
-                12,
-                4.5,
-                2.0,
-                isDebug,
-            )
-        }
-        val proAdMobDataManager = ProPrefAdMobDataManager.Builder()
-            .build(this.proConfigData)
-        proAdMobDataManager.onLogPrint(proAdMobDataManager.onPrefDataSetup())
-        proAdMobDataManager.onLogPrint()
-        //
-        proAdMobHelper = ProAdMobHelper(activity, context)
-            .setEventListener(SetAdEventListener())
-            .setIsDebug(isDebug)
+        proPrefAdMobDataManager.onLogPrint(proPrefAdMobData)
         //
         //proPreferences.clear()
         //onProPrefInitialize(false)
-        //proPreferences.debugPrint()
-    }
-
-    private fun onSetupProPreferences() {
-        //ProPreferences
-        proPreferences = ProPreferences.Builder()
-            .withContext(context)
-            .withPrefsName(context.packageName)
-            .withMode(ProPreferences.Mode.PRIVATE)
-            .withDefaultPrefs(false)
-            .build()
+        proPreferences.debugPrint()
+        val adViewDataManager = proPrefAdMobDataManager.AdViewDataManager()
+        adViewDataManager.canShowAdView(proPrefAdMobData, true)
     }
 
     private fun lastAdViewTimeDifference(isInSecond: Boolean): Int {
@@ -155,25 +133,9 @@ public class ProAdMobManager(private val builder: Builder) {
         proPreferences.debugPrint()
     }
 
-    private fun onProPrefInitialize(isForced: Boolean) {
-        val isInitialized =
-            proPreferences.getBoolean(PrefKey.ADMOB_IS_VIEW_PRE_PREF_INITIALIZED.label, false)
-        if (isInitialized) {
-            if (!isForced) {
-                return
-            }
-        }
-        val lastAdViewMillis: Long = System.currentTimeMillis()
-        val nextTimeSeconds: Int = getRandomId(timeSecondMin, timeSecondMax)
-        val nextEventNeed: Int = getRandomId(eventMin, eventMax)
-        proPreferences.putBoolean(PrefKey.ADMOB_IS_VIEW_PRE_PREF_INITIALIZED.label, true)
-        proPreferences.putLong(PrefKey.ADMOB_LAST_VIEW_TIME_MILLIS.label, lastAdViewMillis)
-        proPreferences.putInt(PrefKey.ADMOB_NEXT_VIEW_TIME_SECONDS.label, nextTimeSeconds)
-        proPreferences.putInt(PrefKey.ADMOB_NEXT_VIEW_REMAIN_TIME_SECONDS.label, nextTimeSeconds)
-        proPreferences.putInt(PrefKey.ADMOB_TOTAL_EVENT_OCCURRED.label, 0)
-        proPreferences.putInt(PrefKey.ADMOB_TOTAL_BUTTON_CLICK_EVENT.label, 0)
-        proPreferences.putInt(PrefKey.ADMOB_TOTAL_VIEW_RESUME_EVENT.label, 0)
-        proPreferences.putInt(PrefKey.ADMOB_NEXT_EVENT_NEED.label, nextEventNeed)
+    private fun onSavePreference() {
+        val jsonString: String = proPrefAdMobDataManager.getJson(proPrefAdMobData)
+        proPreferences.putString(PrefKey.ADMOB_JSON_MODEL_CLASS_DATA.label, jsonString)
     }
 
     public fun getAdRequest(): AdRequest {
@@ -194,31 +156,10 @@ public class ProAdMobManager(private val builder: Builder) {
         proAdMobHelper.onPrepareAd(adRequest, admobAdUnitId)
     }
 
-    public fun show() {
+    public fun showAd() {
         proAdMobHelper.show()
-        onProPrefInitialize(true)
-    }
-
-    inner class SetAdEventListener : ProAdMobHelper.OnAdEventListener {
-        override fun onAdLoaded() {
-            adEventListener.onAdLoaded()
-        }
-
-        override fun onAdFailedToLoad(adError: String) {
-            adEventListener.onAdFailedToLoad(adError)
-        }
-
-        override fun onAdShowedFullScreenContent() {
-            adEventListener.onAdShowedFullScreenContent()
-        }
-
-        override fun onAdDismissedFullScreenContent() {
-            adEventListener.onAdDismissedFullScreenContent()
-        }
-
-        override fun onAdFailedToShowFullScreenContent(adError: String) {
-            adEventListener.onAdFailedToShowFullScreenContent(adError)
-        }
+        //onProPrefInitialize(true)
+        onSavePreference()
     }
 
     public class Builder {
@@ -247,6 +188,75 @@ public class ProAdMobManager(private val builder: Builder) {
             this.activity = activity
             this.context = context
             return ProAdMobManager(this)
+        }
+    }
+
+    inner class OnSetupInitialization {
+        fun onSetupProPreferences(): OnSetupInitialization {
+            //ProPreferences
+            proPreferences = ProPreferences.Builder()
+                .withContext(context)
+                .withPrefsName(context.packageName)
+                .withMode(ProPreferences.Mode.PRIVATE)
+                .withDefaultPrefs(false)
+                .build()
+            return this
+        }
+
+        fun onSetupPrefAdMobDataManager(): OnSetupInitialization {
+            if (proConfigData == null) {
+                proConfigData = ProConfigData(
+                    140,
+                    70,
+                    22,
+                    12,
+                    4.5,
+                    2.0,
+                    isDebug,
+                )
+            }
+            proPrefAdMobDataManager = ProPrefAdMobDataManager.Builder()
+                .build(proConfigData)
+            //proPrefAdMobDataManager.onLogPrint(proPrefAdMobDataManager.onPrefDataSetup())
+            //proPrefAdMobDataManager.onLogPrint()
+            val jsonString: String? =
+                proPreferences.getString(PrefKey.ADMOB_JSON_MODEL_CLASS_DATA.label, null)
+            if (jsonString == null) {
+                proPrefAdMobData = proPrefAdMobDataManager.onSetupPrefData()
+                onSavePreference()
+            } else {
+                proPrefAdMobData = proPrefAdMobDataManager.fromJson(jsonString)
+            }
+            return this
+        }
+
+        fun onSetupAdMobHelper(): OnSetupInitialization {
+            proAdMobHelper = ProAdMobHelper(activity, context)
+                .setEventListener(SetAdEventListener())
+                .setIsDebug(isDebug)
+            return this
+        }
+    }
+
+    inner class SetAdEventListener : ProAdMobHelper.OnAdEventListener {
+        override fun onAdLoaded() {
+            adEventListener.onAdLoaded()
+        }
+
+        override fun onAdFailedToLoad(adError: String) {
+            adEventListener.onAdFailedToLoad(adError)
+        }
+
+        override fun onAdShowedFullScreenContent() {
+            adEventListener.onAdShowedFullScreenContent()
+        }
+
+        override fun onAdDismissedFullScreenContent() {
+            adEventListener.onAdDismissedFullScreenContent()
+        }
+
+        override fun onAdFailedToShowFullScreenContent(adError: String) {
+            adEventListener.onAdFailedToShowFullScreenContent(adError)
         }
     }
 
@@ -281,5 +291,26 @@ public class ProAdMobManager(private val builder: Builder) {
                 return NONE
             }
         }
+    }
+
+    private fun onProPrefInitializeOld(isForced: Boolean) {
+        val isInitialized =
+            proPreferences.getBoolean(PrefKey.ADMOB_IS_VIEW_PRE_PREF_INITIALIZED.label, false)
+        if (isInitialized) {
+            if (!isForced) {
+                return
+            }
+        }
+        val lastAdViewMillis: Long = System.currentTimeMillis()
+        val nextTimeSeconds: Int = getRandomId(timeSecondMin, timeSecondMax)
+        val nextEventNeed: Int = getRandomId(eventMin, eventMax)
+        proPreferences.putBoolean(PrefKey.ADMOB_IS_VIEW_PRE_PREF_INITIALIZED.label, true)
+        proPreferences.putLong(PrefKey.ADMOB_LAST_VIEW_TIME_MILLIS.label, lastAdViewMillis)
+        proPreferences.putInt(PrefKey.ADMOB_NEXT_VIEW_TIME_SECONDS.label, nextTimeSeconds)
+        proPreferences.putInt(PrefKey.ADMOB_NEXT_VIEW_REMAIN_TIME_SECONDS.label, nextTimeSeconds)
+        proPreferences.putInt(PrefKey.ADMOB_TOTAL_EVENT_OCCURRED.label, 0)
+        proPreferences.putInt(PrefKey.ADMOB_TOTAL_BUTTON_CLICK_EVENT.label, 0)
+        proPreferences.putInt(PrefKey.ADMOB_TOTAL_VIEW_RESUME_EVENT.label, 0)
+        proPreferences.putInt(PrefKey.ADMOB_NEXT_EVENT_NEED.label, nextEventNeed)
     }
 }
