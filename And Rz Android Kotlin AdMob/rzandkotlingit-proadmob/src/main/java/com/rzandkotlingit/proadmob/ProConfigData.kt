@@ -9,5 +9,6 @@ data class ProConfigData(
     @SerializedName("min_ui_event_for_next_ad") val minEvent: Int,
     @SerializedName("max_ui_event_offset_for_next_ad") val maxEventOffset: Double,
     @SerializedName("min_ui_event_offset_for_next_ad") val minEventOffset: Double,
+    @SerializedName("is_randomize_ad_id") val isRandomizeAdId: Boolean,
     @SerializedName("is_debug_mode") val isDebug: Boolean,
 )

@@ -31,7 +31,7 @@ internal class ProPrefAdMobDataManager(private val builder: Builder) {
             proPrefAdMobData = fromJson(jsonString)
         }
         //
-        onLogPrint(proPrefAdMobData)
+        //onLogPrint(proPrefAdMobData)
         //
         //proPreferences.clear()
         //onProPrefInitialize(false)
@@ -79,6 +79,7 @@ internal class ProPrefAdMobDataManager(private val builder: Builder) {
         )
         val totalEventOffset =
             getDecimalFormat((totalEventForNext / randEventOffset) * randEventOffset.toInt()).toInt()
+        val isRandomizeAdId = proConfigData.isRandomizeAdId
         //
         return ProPrefAdMobData(
             isInitialized,
@@ -97,6 +98,7 @@ internal class ProPrefAdMobDataManager(private val builder: Builder) {
             totalTimeFactorSeconds,
             randEventOffset,
             totalEventOffset,
+            isRandomizeAdId,
         )
     }
 
@@ -195,6 +197,26 @@ internal class ProPrefAdMobDataManager(private val builder: Builder) {
             }
             return false
         }
+
+        public fun onButtonClick() {
+            proPrefAdMobData.totalButtonClickEvent = proPrefAdMobData.totalButtonClickEvent + 1
+            onEventArise()
+        }
+
+        public fun onResume() {
+            proPrefAdMobData.totalViewResumeEvent = proPrefAdMobData.totalViewResumeEvent + 1
+            onEventArise()
+        }
+
+        private fun onEventArise() {
+            proPrefAdMobData.totalEventCount = proPrefAdMobData.totalEventCount + 1
+            onSavePreference()
+        }
+    }
+
+    public fun onRestartPreference() {
+        proPrefAdMobData = onSetupPrefData()
+        onSavePreference()
     }
 
     private fun setRemainTimeSeconds() {
@@ -211,6 +233,10 @@ internal class ProPrefAdMobDataManager(private val builder: Builder) {
         )
     }
 
+    public fun onLogPrint() {
+        onLogPrint(proPrefAdMobData)
+    }
+
     public fun onLogPrint(proPrefAdMobData: ProPrefAdMobData) {
         println("DEBUG_LOG_PRINT_ADMOB: ProPrefAdMobDataManager->onLogPrint(proPrefAdMobData: ProPrefAdMobData)")
         println("DEBUG_LOG_PRINT_ADMOB: ProPrefAdMobData -> ${getString(proPrefAdMobData)}")
@@ -218,6 +244,10 @@ internal class ProPrefAdMobDataManager(private val builder: Builder) {
 
     private fun getString(proConfigData: ProConfigData): String {
         return gson.toJson(proConfigData)
+    }
+
+    public fun onConfigLogPrint() {
+        onLogPrint(proConfigData)
     }
 
     public fun onLogPrint(proConfigData: ProConfigData) {

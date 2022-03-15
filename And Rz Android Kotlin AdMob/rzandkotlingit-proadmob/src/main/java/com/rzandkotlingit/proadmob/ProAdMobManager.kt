@@ -21,6 +21,7 @@ public class ProAdMobManager(private val builder: Builder) {
     private val timeOverFactorMin = 2.0
     private val eventMax = 22
     private val eventMin = 12
+    private var isRandomizeAdId: Boolean
     private var isDebug: Boolean
 
     init {
@@ -28,6 +29,7 @@ public class ProAdMobManager(private val builder: Builder) {
         this.context = builder.context
         this.proConfigData = builder.proConfigData
         this.adEventListener = builder.eventListener
+        this.isRandomizeAdId = true
         this.isDebug = builder.isDebug
         //
         OnSetupInitialization()
@@ -39,90 +41,40 @@ public class ProAdMobManager(private val builder: Builder) {
         //proPreferences.clear()
         //onProPrefInitialize(false)
         //proPreferences.debugPrint()
-        val adViewDataManager = proPrefAdMobDataManager.AdViewDataManager()
-        val canView = adViewDataManager.canShowAdView(true)
-        println("DEBUG_LOG_PRINT_CAN_VIEW: $canView")
-    }
-
-    private fun lastAdViewTimeDifference(isInSecond: Boolean): Int {
-        val currentTimeMillis: Long = System.currentTimeMillis()
-        val lastAdViewTimeMillis =
-            proPreferences.getLong(PrefKey.ADMOB_LAST_VIEW_TIME_MILLIS.label, 0)
-        if (isInSecond) {
-            return ((currentTimeMillis - lastAdViewTimeMillis) / 1000).toInt()
-        }
-        return (currentTimeMillis - lastAdViewTimeMillis).toInt()
-    }
-
-    private fun isLastAdViewEventCountPassed(): Boolean {
-        val totalAdEvent =
-            proPreferences.getInt(PrefKey.ADMOB_TOTAL_EVENT_OCCURRED.label, 0)
-        val nextAdEventNeed =
-            proPreferences.getInt(PrefKey.ADMOB_NEXT_EVENT_NEED.label, 0)
-        if (totalAdEvent >= nextAdEventNeed) {
-            return true
-        }
-        return false
-    }
-
-    public fun isMaxTimeOver(): Boolean {
-        val nextAdTimeSeconds =
-            proPreferences.getInt(PrefKey.ADMOB_NEXT_VIEW_TIME_SECONDS.label, 0)
-        val timeDiffSeconds = abs(lastAdViewTimeDifference(true))
-        val timeFactor = getRandomFloat(timeOverFactorMin, timeOverFactorMax)
-        val timeOverFactor: Int =
-            getDecimalFormat((nextAdTimeSeconds.toDouble() * timeFactor).toDouble()).toInt()
-        println("DEBUG_LOG_PRINT:\n(#): nextAdTimeSeconds $nextAdTimeSeconds, timeDiffSeconds $timeDiffSeconds")
-        println("DEBUG_LOG_PRINT:\n(#): timeFactor: $timeFactor, timeOverFactor: $timeOverFactor")
-        if (timeDiffSeconds > timeOverFactor) {
-            return true
-        }
-        return false
     }
 
     public fun canShowAdView(isForced: Boolean): Boolean {
-        var retVal = false
-        val nextAdViewTimeSeconds =
-            proPreferences.getInt(PrefKey.ADMOB_NEXT_VIEW_TIME_SECONDS.label, 0)
-        val timeDiffSeconds = lastAdViewTimeDifference(true)
-        if (timeDiffSeconds > nextAdViewTimeSeconds) {
-            retVal = true
-            if (isForced) {
-                return retVal
-            }
-        }
-        if (isMaxTimeOver()) {
-            return true
-        }
-        if (isLastAdViewEventCountPassed() && retVal) {
-            return true
-        }
-        return false
+        val adViewDataManager = proPrefAdMobDataManager.AdViewDataManager()
+        return adViewDataManager.canShowAdView(isForced)
     }
 
     public fun onButtonClick() {
-        var totalEvent = proPreferences.getInt(PrefKey.ADMOB_TOTAL_BUTTON_CLICK_EVENT.label, 0)
+        /*var totalEvent = proPreferences.getInt(PrefKey.ADMOB_TOTAL_BUTTON_CLICK_EVENT.label, 0)
         totalEvent += 1
         proPreferences.putInt(PrefKey.ADMOB_TOTAL_BUTTON_CLICK_EVENT.label, totalEvent)
-        onEventArise()
+        onEventArise()*/
+        val adViewDataManager = proPrefAdMobDataManager.AdViewDataManager()
+        adViewDataManager.onButtonClick()
     }
 
     public fun onResume() {
-        var totalEvent = proPreferences.getInt(PrefKey.ADMOB_TOTAL_VIEW_RESUME_EVENT.label, 0)
+        /*var totalEvent = proPreferences.getInt(PrefKey.ADMOB_TOTAL_VIEW_RESUME_EVENT.label, 0)
         totalEvent += 1
         proPreferences.putInt(PrefKey.ADMOB_TOTAL_VIEW_RESUME_EVENT.label, totalEvent)
-        onEventArise()
+        onEventArise()*/
+        val adViewDataManager = proPrefAdMobDataManager.AdViewDataManager()
+        adViewDataManager.onResume()
     }
 
     private fun onEventArise() {
-        var totalEvent = proPreferences.getInt(PrefKey.ADMOB_TOTAL_EVENT_OCCURRED.label, 0)
+        /*var totalEvent = proPreferences.getInt(PrefKey.ADMOB_TOTAL_EVENT_OCCURRED.label, 0)
         totalEvent += 1
         proPreferences.putInt(PrefKey.ADMOB_TOTAL_EVENT_OCCURRED.label, totalEvent)
         val nextRemainTime =
             proPreferences.getInt(PrefKey.ADMOB_NEXT_VIEW_REMAIN_TIME_SECONDS.label, 0)
         val timeDiffSeconds = lastAdViewTimeDifference(true)
         val timeRemain = nextRemainTime - timeDiffSeconds
-        proPreferences.putInt(PrefKey.ADMOB_NEXT_VIEW_REMAIN_TIME_SECONDS.label, timeRemain)
+        proPreferences.putInt(PrefKey.ADMOB_NEXT_VIEW_REMAIN_TIME_SECONDS.label, timeRemain)*/
     }
 
     public fun onClear() {
@@ -131,11 +83,6 @@ public class ProAdMobManager(private val builder: Builder) {
 
     public fun onDebugPrint() {
         proPreferences.debugPrint()
-    }
-
-    private fun onSavePreference() {
-        val jsonString: String = proPrefAdMobDataManager.getJson(proPrefAdMobData)
-        proPreferences.putString(PrefKey.ADMOB_JSON_MODEL_CLASS_DATA.label, jsonString)
     }
 
     public fun getAdRequest(): AdRequest {
@@ -159,7 +106,8 @@ public class ProAdMobManager(private val builder: Builder) {
     public fun showAd() {
         proAdMobHelper.show()
         //onProPrefInitialize(true)
-        onSavePreference()
+        //onSavePreference()
+        proPrefAdMobDataManager.onRestartPreference()
     }
 
     public class Builder {
@@ -212,6 +160,7 @@ public class ProAdMobManager(private val builder: Builder) {
                     12,
                     4.5,
                     2.0,
+                    isRandomizeAdId,
                     isDebug,
                 )
             }
@@ -293,6 +242,11 @@ public class ProAdMobManager(private val builder: Builder) {
         }
     }
 
+    private fun onSavePreference() {
+        val jsonString: String = proPrefAdMobDataManager.getJson(proPrefAdMobData)
+        proPreferences.putString(PrefKey.ADMOB_JSON_MODEL_CLASS_DATA.label, jsonString)
+    }
+
     private fun onProPrefInitializeOld(isForced: Boolean) {
         val isInitialized =
             proPreferences.getBoolean(PrefKey.ADMOB_IS_VIEW_PRE_PREF_INITIALIZED.label, false)
@@ -312,5 +266,61 @@ public class ProAdMobManager(private val builder: Builder) {
         proPreferences.putInt(PrefKey.ADMOB_TOTAL_BUTTON_CLICK_EVENT.label, 0)
         proPreferences.putInt(PrefKey.ADMOB_TOTAL_VIEW_RESUME_EVENT.label, 0)
         proPreferences.putInt(PrefKey.ADMOB_NEXT_EVENT_NEED.label, nextEventNeed)
+    }
+
+    private fun lastAdViewTimeDifference(isInSecond: Boolean): Int {
+        val currentTimeMillis: Long = System.currentTimeMillis()
+        val lastAdViewTimeMillis =
+            proPreferences.getLong(PrefKey.ADMOB_LAST_VIEW_TIME_MILLIS.label, 0)
+        if (isInSecond) {
+            return ((currentTimeMillis - lastAdViewTimeMillis) / 1000).toInt()
+        }
+        return (currentTimeMillis - lastAdViewTimeMillis).toInt()
+    }
+
+    private fun isLastAdViewEventCountPassed(): Boolean {
+        val totalAdEvent =
+            proPreferences.getInt(PrefKey.ADMOB_TOTAL_EVENT_OCCURRED.label, 0)
+        val nextAdEventNeed =
+            proPreferences.getInt(PrefKey.ADMOB_NEXT_EVENT_NEED.label, 0)
+        if (totalAdEvent >= nextAdEventNeed) {
+            return true
+        }
+        return false
+    }
+
+    public fun isMaxTimeOver(): Boolean {
+        val nextAdTimeSeconds =
+            proPreferences.getInt(PrefKey.ADMOB_NEXT_VIEW_TIME_SECONDS.label, 0)
+        val timeDiffSeconds = abs(lastAdViewTimeDifference(true))
+        val timeFactor = getRandomFloat(timeOverFactorMin, timeOverFactorMax)
+        val timeOverFactor: Int =
+            getDecimalFormat((nextAdTimeSeconds.toDouble() * timeFactor).toDouble()).toInt()
+        println("DEBUG_LOG_PRINT:\n(#): nextAdTimeSeconds $nextAdTimeSeconds, timeDiffSeconds $timeDiffSeconds")
+        println("DEBUG_LOG_PRINT:\n(#): timeFactor: $timeFactor, timeOverFactor: $timeOverFactor")
+        if (timeDiffSeconds > timeOverFactor) {
+            return true
+        }
+        return false
+    }
+
+    public fun canShowAdViewOld(isForced: Boolean): Boolean {
+        var retVal = false
+        val nextAdViewTimeSeconds =
+            proPreferences.getInt(PrefKey.ADMOB_NEXT_VIEW_TIME_SECONDS.label, 0)
+        val timeDiffSeconds = lastAdViewTimeDifference(true)
+        if (timeDiffSeconds > nextAdViewTimeSeconds) {
+            retVal = true
+            if (isForced) {
+                return retVal
+            }
+        }
+        if (isMaxTimeOver()) {
+            return true
+        }
+        if (isLastAdViewEventCountPassed() && retVal) {
+            return true
+        }
+        return false
     }
 }

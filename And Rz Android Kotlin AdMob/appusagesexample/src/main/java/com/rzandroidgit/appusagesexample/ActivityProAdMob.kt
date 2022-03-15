@@ -36,6 +36,7 @@ class ActivityProAdMob : AppCompatActivity() {
             4.5,
             2.0,
             true,
+            true,
         )
         //
         proAdMobManager = ProAdMobManager.Builder()
