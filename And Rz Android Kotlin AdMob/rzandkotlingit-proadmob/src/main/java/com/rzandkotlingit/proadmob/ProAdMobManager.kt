@@ -35,13 +35,13 @@ public class ProAdMobManager(private val builder: Builder) {
             .onSetupPrefAdMobDataManager()
             .onSetupAdMobHelper()
         //
-        proPrefAdMobDataManager.onLogPrint(proPrefAdMobData)
         //
         //proPreferences.clear()
         //onProPrefInitialize(false)
-        proPreferences.debugPrint()
+        //proPreferences.debugPrint()
         val adViewDataManager = proPrefAdMobDataManager.AdViewDataManager()
-        adViewDataManager.canShowAdView(proPrefAdMobData, true)
+        val canView = adViewDataManager.canShowAdView(true)
+        println("DEBUG_LOG_PRINT_CAN_VIEW: $canView")
     }
 
     private fun lastAdViewTimeDifference(isInSecond: Boolean): Int {
@@ -216,17 +216,17 @@ public class ProAdMobManager(private val builder: Builder) {
                 )
             }
             proPrefAdMobDataManager = ProPrefAdMobDataManager.Builder()
-                .build(proConfigData)
+                .build(activity, context, proConfigData)
             //proPrefAdMobDataManager.onLogPrint(proPrefAdMobDataManager.onPrefDataSetup())
             //proPrefAdMobDataManager.onLogPrint()
-            val jsonString: String? =
+            /*val jsonString: String? =
                 proPreferences.getString(PrefKey.ADMOB_JSON_MODEL_CLASS_DATA.label, null)
             if (jsonString == null) {
                 proPrefAdMobData = proPrefAdMobDataManager.onSetupPrefData()
                 onSavePreference()
             } else {
                 proPrefAdMobData = proPrefAdMobDataManager.fromJson(jsonString)
-            }
+            }*/
             return this
         }
 

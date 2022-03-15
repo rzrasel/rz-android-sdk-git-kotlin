@@ -16,6 +16,7 @@ internal data class ProPrefAdMobData(
     @SerializedName("admob_total_event_counter") var totalEventCount: Int,
     @SerializedName("admob_rand_time_factor_offset") var randTimeFactorOffset: Double,
     @SerializedName("admob_total_time_factor_offset") var totalTimeFactorOffset: Int,
+    @SerializedName("admob_total_time_factor_seconds") var totalTimeFactorSeconds: Long,
     @SerializedName("admob_rand_event_offset") var randEventOffset: Double,
     @SerializedName("admob_total_event_offset") var totalEventOffset: Int,
     //@SerializedName("admob_next_event_need") var totalEventCounter: Int,
