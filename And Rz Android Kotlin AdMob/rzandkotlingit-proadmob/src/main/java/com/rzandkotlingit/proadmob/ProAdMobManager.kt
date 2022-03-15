@@ -49,40 +49,22 @@ public class ProAdMobManager(private val builder: Builder) {
     }
 
     public fun onButtonClick() {
-        /*var totalEvent = proPreferences.getInt(PrefKey.ADMOB_TOTAL_BUTTON_CLICK_EVENT.label, 0)
-        totalEvent += 1
-        proPreferences.putInt(PrefKey.ADMOB_TOTAL_BUTTON_CLICK_EVENT.label, totalEvent)
-        onEventArise()*/
         val adViewDataManager = proPrefAdMobDataManager.AdViewDataManager()
         adViewDataManager.onButtonClick()
     }
 
     public fun onResume() {
-        /*var totalEvent = proPreferences.getInt(PrefKey.ADMOB_TOTAL_VIEW_RESUME_EVENT.label, 0)
-        totalEvent += 1
-        proPreferences.putInt(PrefKey.ADMOB_TOTAL_VIEW_RESUME_EVENT.label, totalEvent)
-        onEventArise()*/
         val adViewDataManager = proPrefAdMobDataManager.AdViewDataManager()
         adViewDataManager.onResume()
     }
 
-    private fun onEventArise() {
-        /*var totalEvent = proPreferences.getInt(PrefKey.ADMOB_TOTAL_EVENT_OCCURRED.label, 0)
-        totalEvent += 1
-        proPreferences.putInt(PrefKey.ADMOB_TOTAL_EVENT_OCCURRED.label, totalEvent)
-        val nextRemainTime =
-            proPreferences.getInt(PrefKey.ADMOB_NEXT_VIEW_REMAIN_TIME_SECONDS.label, 0)
-        val timeDiffSeconds = lastAdViewTimeDifference(true)
-        val timeRemain = nextRemainTime - timeDiffSeconds
-        proPreferences.putInt(PrefKey.ADMOB_NEXT_VIEW_REMAIN_TIME_SECONDS.label, timeRemain)*/
-    }
-
     public fun onClear() {
-        proPreferences.clear()
+        //proPreferences.clear()
     }
 
     public fun onDebugPrint() {
-        proPreferences.debugPrint()
+        //proPreferences.debugPrint()
+        proPrefAdMobDataManager.onLogPreferences()
     }
 
     public fun getAdRequest(): AdRequest {

@@ -185,7 +185,7 @@ internal class ProPrefAdMobDataManager(private val builder: Builder) {
         fun canShowAdView(isForced: Boolean): Boolean {
             //var retVal = false
             onSavePreference()
-            onLogPrint(proPrefAdMobData)
+            //onLogPrint(proPrefAdMobData)
             if (canShowByForced(proPrefAdMobData) && isForced) {
                 return true
             }
@@ -253,6 +253,12 @@ internal class ProPrefAdMobDataManager(private val builder: Builder) {
     public fun onLogPrint(proConfigData: ProConfigData) {
         println("DEBUG_LOG_PRINT_ADMOB: ProPrefAdMobDataManager->onLogPrint(proConfigData: ProConfigData)")
         println("DEBUG_LOG_PRINT_ADMOB: ProConfigData -> ${getString(proConfigData)}")
+    }
+
+    public fun onLogPreferences() {
+        println("DEBUG_LOG_PRINT_ADMOB: ProPrefAdMobDataManager->onLogPreferences()")
+        println("DEBUG_LOG_PRINT_ADMOB: proPreferences ->")
+        proPreferences.debugPrint()
     }
 
     private enum class PrefKey(val label: String) {
