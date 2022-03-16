@@ -5,7 +5,7 @@ Rz Android SDK Git Kotlin
 ### GIT Command
 ```git_command
 git init
-git remote add origin https://github.com/rzrasel/rzandroid-kotlin-sdk.git
+git remote add origin https://github.com/rzrasel/rz-android-sdk-git-kotlin.git
 git remote -v
 git fetch && git checkout master
 git add .
