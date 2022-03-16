@@ -1,5 +1,5 @@
-# rzandroid-kotlin-sdk
-Rz Android Kotlin Git SDK
+# rz-android-sdk-git-kotlin
+Rz Android SDK Git Kotlin
 
 
 ### GIT Command
