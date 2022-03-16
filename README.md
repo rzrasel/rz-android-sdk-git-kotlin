@@ -1,8 +1,6 @@
 # rz-android-sdk-git-kotlin
 Rz Android SDK Git Kotlin
 
-Test Update
-
 
 ### GIT Command
 ```git_command
