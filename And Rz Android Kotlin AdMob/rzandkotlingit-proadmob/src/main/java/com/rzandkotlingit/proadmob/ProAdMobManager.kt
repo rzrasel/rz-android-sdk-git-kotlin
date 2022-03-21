@@ -2,7 +2,6 @@ package com.rzandkotlingit.proadmob
 
 import android.app.Activity
 import android.content.Context
-import android.os.Debug
 import com.google.android.gms.ads.AdRequest
 import java.lang.Math.abs
 
@@ -56,6 +55,14 @@ public class ProAdMobManager(private val builder: Builder) {
     public fun onResume() {
         val adViewDataManager = proPrefAdMobDataManager.AdViewDataManager()
         adViewDataManager.onResume()
+    }
+
+    public fun onResetPreference() {
+        proPrefAdMobDataManager.onResetPreference()
+    }
+
+    public fun onClearPreferences() {
+        proPrefAdMobDataManager.onClearPreferences()
     }
 
     public fun onClear() {
@@ -140,10 +147,12 @@ public class ProAdMobManager(private val builder: Builder) {
                     70,
                     22,
                     12,
-                    4.5,
+                    4.0,
                     2.0,
-                    isRandomizeAdId,
-                    isDebug,
+                    2.6,
+                    2.2,
+                    true,
+                    false
                 )
             }
             proPrefAdMobDataManager = ProPrefAdMobDataManager.Builder()

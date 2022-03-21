@@ -65,21 +65,23 @@ internal class ProPrefAdMobDataManager(private val builder: Builder) {
         //
         val randTimeFactorOffset = getDecimalFormat(
             getRandomDouble(
-                proConfigData.minEventOffset,
-                proConfigData.maxEventOffset
+                proConfigData.minTimeOffset,
+                proConfigData.maxTimeOffset
             )
         )
-        val totalTimeFactorOffset = getDecimalFormat(nextRandSeconds * randTimeFactorOffset).toInt()
-        val totalTimeFactorSeconds = lastTimeSeconds + totalTimeFactorOffset
-        val randEventOffset = getDecimalFormat(
+        val totalTimeFactorOffset: Int =
+            getDecimalFormat(nextRandSeconds * randTimeFactorOffset).toInt()
+        val totalTimeFactorSeconds: Long = lastTimeSeconds + totalTimeFactorOffset
+        val randEventOffset: Double = getDecimalFormat(
             getRandomDouble(
                 proConfigData.minEventOffset,
                 proConfigData.maxEventOffset
             )
         )
-        val totalEventOffset =
+        val totalEventOffset: Int =
             getDecimalFormat((totalEventForNext / randEventOffset) * randEventOffset.toInt()).toInt()
-        val isRandomizeAdId = proConfigData.isRandomizeAdId
+        val showsFromCondition: String = "none initialization"
+        val isRandomizeAdId: Boolean = proConfigData.isRandomizeAdId
         //
         return ProPrefAdMobData(
             isInitialized,
@@ -98,6 +100,7 @@ internal class ProPrefAdMobDataManager(private val builder: Builder) {
             totalTimeFactorSeconds,
             randEventOffset,
             totalEventOffset,
+            showsFromCondition,
             isRandomizeAdId,
         )
     }
@@ -176,7 +179,7 @@ internal class ProPrefAdMobDataManager(private val builder: Builder) {
                 proPrefAdMobData.totalTimeFactorSeconds - getCurrentSeconds()
             val totalEventFactor =
                 proPrefAdMobData.totalEventOffset - proPrefAdMobData.totalEventCount
-            if (totalTimeFactor < 0 || totalEventFactor < 0) {
+            if (totalTimeFactor < 0 && totalEventFactor < 0) {
                 return true
             }
             return false
@@ -184,17 +187,26 @@ internal class ProPrefAdMobDataManager(private val builder: Builder) {
 
         fun canShowAdView(isForced: Boolean): Boolean {
             //var retVal = false
-            onSavePreference()
+            //onSavePreference()
             //onLogPrint(proPrefAdMobData)
             if (canShowByForced(proPrefAdMobData) && isForced) {
+                proPrefAdMobData.showsFromCondition =
+                    "if (canShowByForced(proPrefAdMobData) && isForced)"
+                onSavePreference()
                 return true
             }
             if (canPassByRegular(proPrefAdMobData)) {
+                proPrefAdMobData.showsFromCondition = "if (canPassByRegular(proPrefAdMobData))"
+                onSavePreference()
                 return true
             }
             if (isMaxTimeOver(proPrefAdMobData)) {
+                proPrefAdMobData.showsFromCondition = "if (isMaxTimeOver(proPrefAdMobData))"
+                onSavePreference()
                 return true
             }
+            proPrefAdMobData.showsFromCondition = "condition not matched, can not show"
+            onSavePreference()
             return false
         }
 
@@ -214,6 +226,10 @@ internal class ProPrefAdMobDataManager(private val builder: Builder) {
         }
     }
 
+    public fun onResetPreference() {
+        onRestartPreference()
+    }
+
     public fun onRestartPreference() {
         proPrefAdMobData = onSetupPrefData()
         onSavePreference()
@@ -231,6 +247,10 @@ internal class ProPrefAdMobDataManager(private val builder: Builder) {
             ProAdMobManager.PrefKey.ADMOB_JSON_MODEL_CLASS_DATA.label,
             jsonString
         )
+    }
+
+    public fun onClearPreferences() {
+        proPreferences.clear()
     }
 
     public fun onLogPrint() {
